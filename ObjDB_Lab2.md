@@ -10,9 +10,10 @@
 
 ## Пояснения
 
-Программа на Java состоит из классов. Каждый класс хранится в отдельном файле. Имя файла должно совпадать с именем класса, расширение файла - `java`.
+Программа на Java состоит из классов. Каждый класс хранится в отдельном файле. Имя файла должно совпадать с именем класса, расширение файла - `*.java`.
 
 Для того, чтобы класс стал сущностью БД надо выше определения класса добавить аннотацию `@Entity`.
+
 Пример класса сущности:
 ```
 @Entity
@@ -42,24 +43,22 @@ public class organization {
 
 Аннотация `@SecondaryKey` объявляет связь `ONE_TO_ONE` (один к одному) текущего поля `leader_id` класса `organization` с полем `id` класса `leaders`.
 
+Аннотация `@Persistent` определяет постоянный класс. Например, каждый класс сущностей содержит PrimaryIndex по которому производится доступ к экземплярам данного класса. Поэтому можно вынести общее поле классов сущностей в один базовый класс.
 
-
-
-Аннотация @Persistent определяет постоянный класс. Например, каждый класс сущностей содержит PrimaryIndex по которому производится доступ к экземплярам данного класса. Поэтому можно вынести общее поле классов сущностей в один базовый класс.
 Пример:
 ```
-  @Persistent
-  class BaseClass {
-      @PrimaryKey(sequence="ID")
-      private int id;
-  }
+@Persistent
+class BaseClass {
+    @PrimaryKey(sequence="ID")
+    private int id;
+}
 
-  @Entity
-  class organization extends BaseClass {
-      private String name;
-      private String addr;
-      ...
-      ...
+@Entity
+class organization extends BaseClass {
+    private String name;
+    private String addr;
+    ...
+    ...
   }
 ```
 
