@@ -272,6 +272,6 @@ int new_id = orgda.pIdx.sortedMap().lastKey() + 1;
 
 ### Получение списка всех зависимых записей (один-ко-многим)
 
-Получение списка всех зависимых записей с использованием связи "один-ко-многим" осуществляется при помощи механизма курсоров. См. [Retrieving Objects from an Entity Store](https://docs.oracle.com/cd/E17076_03/html/gsg/JAVA/simpleget.html)
+Получение списка всех зависимых записей с использованием связи "один-ко-многим" осуществляется при помощи механизма курсоров. См. [Retrieving Objects from an Entity Store](https://docs.oracle.com/cd/E17076_03/html/gsg/JAVA/dpl_entityjoin.html)
 
 
