@@ -194,27 +194,27 @@ throws DatabaseException {
 ```java
 // Добавить в БД демо-записи
 public void fillDemo()
-            throws DatabaseException {
+		throws DatabaseException {
 
-		// 1) Открыть окружение и хранилище
-        setup();
+	// 1) Открыть окружение и хранилище
+	setup();
 
-        // 2) Создать экземпляр класса доступа к данным (DA, Data accessor)
-        orgda = new organizationDA(store);
+	// 2) Создать экземпляр класса доступа к данным (DA, Data accessor)
+	orgda = new organizationDA(store);
 
-        // 3) Создать объекты и заполнить их данными
-        organization org1 = new organization(1, "УдГУ", "Университетская, 1", "0000000000", "Сбербанк", 1812345678, 1);
-        organization org2 = new organization(2, "ИжГТУ", "Студенческая, 7", "0000000000", "Сбербанк", 1809876543, 2);
-        organization org3 = new organization(3, "ИжГСХА", "Студенческая, 11", "0000000000", "Сбербанк", 1865432178, 3);
+	// 3) Создать объекты и заполнить их данными
+	organization org1 = new organization(1, "УдГУ", "Университетская, 1", "0000000000", "Сбербанк", 1812345678, 1);
+	organization org2 = new organization(2, "ИжГТУ", "Студенческая, 7", "0000000000", "Сбербанк", 1809876543, 2);
+	organization org3 = new organization(3, "ИжГСХА", "Студенческая, 11", "0000000000", "Сбербанк", 1865432178, 3);
 
-		// 4) Поместить созданные объекты в хранилище
-        orgda.pIdx.put(org1);
-        orgda.pIdx.put(org2);
-        orgda.pIdx.put(org3);
+	// 4) Поместить созданные объекты в хранилище
+	orgda.pIdx.put(org1);
+	orgda.pIdx.put(org2);
+	orgda.pIdx.put(org3);
 
-		// 5) Закрыть окружение и хранилище
-        shutdown();
-    }
+	// 5) Закрыть окружение и хранилище
+	shutdown();
+}
 ```
 
 Аналогично реализуются другие методы задания.
