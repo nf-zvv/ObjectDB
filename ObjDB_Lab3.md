@@ -75,28 +75,12 @@
 3. Закрыть соединение (окружение)
 
 
-### Подключение окружения и хранилища
 
-```java
-private static File envHome = new File("./JEDB");
-
-...
-
-public void setup() {
-	EnvironmentConfig envConfig = new EnvironmentConfig();
-	StoreConfig storeConfig = new StoreConfig();
-
-	envConfig.setAllowCreate(true);
-	storeConfig.setAllowCreate(true);
-
-	// Open the environment and entity store
-	envmnt = new Environment(envHome, envConfig);
-	store = new EntityStore(envmnt, "EntityStore", storeConfig);
-}
-```
 ### Создание класса доступа к данным
 
 Создать класс доступа к данным (data accessor class, DA class)
+
+Пример из документации:
 
 ```java
 public class SimpleDA {
@@ -132,10 +116,41 @@ public class SimpleDA {
 PrimaryIndex<Integer, organization> pIdx;
 ```
 
-Чтобы извлечь вторичный индекс необходимо использовать метод `EntityStore.getSecondaryIndex()`. Для этого необходимо указать тип данных первичного ключа, тип данных вторичного ключа и класс сущности. Например, чтобы извлечь вторичный индекс класса `organization` (см. описание этого класса в лаб.2), где первичный и вторичный ключи имеют тип Integer:
+Чтобы извлечь вторичный индекс необходимо использовать метод `EntityStore.getSecondaryIndex()`. Для этого необходимо указать тип данных первичного ключа, тип данных вторичного ключа и класс сущности. Например, чтобы извлечь вторичный индекс класса `organization` (см. описание этого класса в [лаб.2](ObjDB_Lab2.md)), где первичный и вторичный ключи имеют тип Integer:
 
 ```
 SecondaryIndex<Integer, Integer, organization> sIdx1;
+```
+
+
+### Подключение и закрытие окружения и хранилища
+
+```java
+private static File envHome = new File("./JEDB");
+
+//...
+
+public void setup() {
+	EnvironmentConfig envConfig = new EnvironmentConfig();
+	StoreConfig storeConfig = new StoreConfig();
+
+	envConfig.setAllowCreate(true);
+	storeConfig.setAllowCreate(true);
+
+	// Открыть окружение и хранилище
+	envmnt = new Environment(envHome, envConfig);
+	store = new EntityStore(envmnt, "EntityStore", storeConfig);
+}
+
+
+// Закрыть окружение и хранилище
+public void shutdown()
+		throws DatabaseException {
+
+	store.close();
+	envmnt.close();
+}
+
 ```
 
 
@@ -150,6 +165,8 @@ SecondaryIndex<Integer, Integer, organization> sIdx1;
 3. Создать объект (наполнить данными), который будет помещен в хранилище.
 4. Поместить созданный объект в хранилище используя метод `put()`.
 5. Закрыть окружение и хранилище.
+
+Пример из документации:
 
 ```java
 private void run()
@@ -172,9 +189,86 @@ throws DatabaseException {
 }
 ```
 
-### Считывание объектов из хранилища (Entity Store)
+Пример для сущности `organization` из [лаб.2](ObjDB_Lab2.md):
 
-Получение объектов из хранилища происходит аналогично, только используется метод `get()`. См. [Retrieving Objects from an Entity Store](https://docs.oracle.com/cd/E17076_03/html/gsg/JAVA/simpleget.html)
+```java
+// Добавить в БД демо-записи
+public void fillDemo()
+            throws DatabaseException {
+
+		// 1) Открыть окружение и хранилище
+        setup();
+
+        // 2) Создать экземпляр класса доступа к данным (DA, Data accessor)
+        orgda = new organizationDA(store);
+
+        // 3) Создать объекты и заполнить их данными
+        organization org1 = new organization(1, "УдГУ", "Университетская, 1", "0000000000", "Сбербанк", 1812345678, 1);
+        organization org2 = new organization(2, "ИжГТУ", "Студенческая, 7", "0000000000", "Сбербанк", 1809876543, 2);
+        organization org3 = new organization(3, "ИжГСХА", "Студенческая, 11", "0000000000", "Сбербанк", 1865432178, 3);
+
+		// 4) Поместить созданные объекты в хранилище
+        orgda.pIdx.put(org1);
+        orgda.pIdx.put(org2);
+        orgda.pIdx.put(org3);
+
+		// 5) Закрыть окружение и хранилище
+        shutdown();
+    }
+```
+
+Аналогично реализуются другие методы задания.
+
+### Считывание объекта из хранилища (Entity Store)
+
+Получение объекта из хранилища происходит аналогично, только используется метод `get()`. См. [Retrieving Objects from an Entity Store](https://docs.oracle.com/cd/E17076_03/html/gsg/JAVA/simpleget.html)
+
+Для того, чтобы получить объект из хранилище необходимо:
+
+1. Открыть окружение и хранилище - см. пример `setup()`.
+2. Создать экземпляр класса доступа к данным - см. пример `SimpleDA`.
+3. Извлечь объект по первичному ключу: `organization org = orgda.pIdx.get(Id);`
+4. Выполнить необходимые действия с полученным объектом: `String name = org.getName()`
+5. Закрыть окружение и хранилище.
+
+### Получение списка всех записей
+
+Для получения списка всех записей рекомендуется использовать следующую конструкцию.
+Пример для сущности `organization` из [лаб.2](ObjDB_Lab2.md):
+
+```java
+	// Перебрать все записи класса organization по первичному ключу
+	for( Map.Entry<Integer, organization> entry : orgda.pIdx.map().entrySet() ){
+		// entry - итератор
+		// getValue() - получить объект класса organization
+		// getId(),getName() - методы класса organization
+		int id = entry.getValue().getId();
+		String name = entry.getValue().getName();
+		// ...
+		// выполнить необходимые действия с полученными значениями
+	}
+```
+
+### Добавление записи
+
+Чтобы добавить новую запись, ей нужно присвоить новый `id`.
+Получаем последний `id` в базе и увеличиваем его.
+Это делается при помощи следующей строки:
+
+```java
+int new_id = orgda.pIdx.sortedMap().lastKey() + 1;
+```
+
+### Удаление объекта из хранилища (Entity Store)
+
+Для удаление объекта из хранилища используется метод `delete()`. См. [Deleting Entity Objects](https://docs.oracle.com/cd/E17076_03/html/gsg/JAVA/dpl_delete.html)
+
+Для того, чтобы удалить объект из хранилища необходимо:
+
+1. Открыть окружение и хранилище - см. пример `setup()`.
+2. Создать экземпляр класса доступа к данным - см. пример `SimpleDA`.
+3. Удалить объект по первичному ключу: `orgda.pIdx.delete(Id);`
+4. Закрыть окружение и хранилище.
 
 ### Получение списка всех зависимых записей (один-ко-многим)
 
