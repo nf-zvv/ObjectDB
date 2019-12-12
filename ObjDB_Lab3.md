@@ -154,7 +154,7 @@ public void shutdown()
 ```
 
 
-### Помещение объектов в хранилище (Entity Store)
+### Добавление объектов в хранилище (Entity Store)
 
 См. [Placing Objects in an Entity Store](https://docs.oracle.com/cd/E17076_03/html/gsg/JAVA/simpleput.html)
 
@@ -219,6 +219,17 @@ public void fillDemo()
 
 Аналогично реализуются другие методы задания.
 
+**Замечание:**
+
+Чтобы добавить новую запись, ей нужно присвоить новый `id`.
+Получаем последний `id` в базе и увеличиваем его.
+Это делается при помощи следующей строки:
+
+```java
+int new_id = orgda.pIdx.sortedMap().lastKey() + 1;
+```
+
+
 ### Считывание объекта из хранилища (Entity Store)
 
 Получение объекта из хранилища происходит аналогично, только используется метод `get()`. См. [Retrieving Objects from an Entity Store](https://docs.oracle.com/cd/E17076_03/html/gsg/JAVA/simpleget.html)
@@ -247,16 +258,6 @@ public void fillDemo()
 		// ...
 		// выполнить необходимые действия с полученными значениями
 	}
-```
-
-### Добавление записи
-
-Чтобы добавить новую запись, ей нужно присвоить новый `id`.
-Получаем последний `id` в базе и увеличиваем его.
-Это делается при помощи следующей строки:
-
-```java
-int new_id = orgda.pIdx.sortedMap().lastKey() + 1;
 ```
 
 ### Удаление объекта из хранилища (Entity Store)
