@@ -17,7 +17,7 @@
 2. Создать экземпляр класса доступа к данным - см. пример `SimpleDA`.
 3. Получить объект первичного ключа (?) 
 4. Настроить курсор
-5. В цикле путем перебора объектов БД при помощи курсора найти объект первичный индект которого совпадает с искомым.
+5. В цикле путем перебора объектов БД при помощи курсора найти объект, первичный индекс которого совпадает с искомым.
 5. Закрыть окружение и хранилище.
 
 Использование курсоров.
@@ -31,7 +31,7 @@
     orgDA = new organizationDA(store);
     
     // 3) 
-    EntityIndex<Integer,organization> pIndex = store.pIdx;
+    EntityIndex<Integer,organization> pIndex = orgDA.pIdx;
     
     // 4) 
     EntityCursor<organization> org_cursor = pIndex.entities();
@@ -43,12 +43,17 @@
             // либо
             // вызвать метод getId() экземпляра класса organization
             id = org_cursor.current().getId();
-            // можно внести изменение, где record - объект класса organization
+            // либо
+            // можно внести изменение (под текущим id вставить другой объект)
+            // где record - объект класса organization
             org_cursor.update(record);
         }
     } finally {
         // Всегда надо закрывать курсор
         pi_cursor.close();
     } 
+    
+    // 6) Закрыть окружение и хранилище
+	shutdown();
 
 ```
